@@ -20,10 +20,11 @@ Implementation
 --------------
 - has only two small relevant files - html/js/REPL.js is javascript file while src/jserver.py is the back-end python server
 - jserver.py is the process managing Julia Sessions. It directs incoming messages to the right julia process.
+    * jserver.py launches a new julia process (the standard julia executable without any arguments) for each session
     * Multiple users can share the same session
-    * the subprocess module is used to spawn a julia process
+    * jserver.py queues requests from different users for the same session
+    * the subprocess module is used to spawn a julia process. Communication between Tornado and julia is via pipes mapped onto the stdin and stdout of the julia process.
     
-- Javascript code is in html/js/REPL.js
 - It uses a chat-like interface to support multiple users - i.e., a separate console for entering julia expressions just beneath the main window
 - In order to identify the different users, incoming expressions are appended with a right-justified julia comment specifying the username before passing them onto the julia process. 
 
@@ -68,4 +69,5 @@ TODO
 - Handle zombie julia processes
 - Daemonize jserver.py
 - Delete session directory in /tmp/jl_sessions when session closes
+- Make the entire setup more resilient to error conditions
 

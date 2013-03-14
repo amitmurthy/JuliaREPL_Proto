@@ -62,6 +62,16 @@ Starting the web repl
 - listen port for jserver.py must be in sync with that in nginx.conf
 - point your browser at http://localhost:8000/ or whatever your configuration and you should be good to go.
 
+- Sample launch instructions
+    * a sample nginx.conf is provided in the 'conf' directory 
+    * create a 'run' directory under JuliaREPL_Proto - 'run' has been added to .gitignore. 
+    * nginx creates a bunch of subdirectories under its working directory, so it is good to keep the 'run' directory separate. 
+    * cd JuliaREPL_Proto/run
+    * /usr/local/nginx/sbin/nginx -c ../conf/nginx.conf -p .
+    * NOTE: change the nginx path above according to your setup 
+    * "/usr/local/nginx/sbin/nginx -c ../conf/nginx.conf -p . -s stop" stops nginx
+    * ../src/jserver.py -j /path/to/julia/home/julia launches the python back-end
+
 
 TODO
 ====

@@ -1,7 +1,7 @@
 Julia Web REPL - alternate implementation
 =========================================
 
-This project is a prototype of an alternate (simpler?) implementation for the Julia Web REPL
+This is a proof-of-concept of an alternate (simpler?) implementation for the Julia Web REPL
 
 Simplicity is sought to be achieved by 
 - using the standard julia console executable as-is for the web REPL

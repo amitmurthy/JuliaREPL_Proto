@@ -7,7 +7,7 @@ Simplicity is sought to be achieved by
 - using the standard julia console executable as-is for the web REPL
 - using websockets instead of XMLHTTPRequest
 - using termlib.js for interpreting terminal codes on the browser
-- Python / Tornado for the message router
+- back-end in Tornado/Python (message router, julia sessions gateway)
 
 
 Dependencies

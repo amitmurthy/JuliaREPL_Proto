@@ -1,24 +1,24 @@
-var DSP_wsUri = "ws://" + window.document.location.host + "/ws"; 
-var DSP_term;
-var DSP_input;
-var DSP_ws = null;
-var DSP_cmds = new Array();
-var DSP_session = 'common';
-var DSP_user = 'guest';
-var DSP_ws_cnt = 0;
+var REPL_wsUri = "ws://" + window.document.location.host + "/ws"; 
+var REPL_term;
+var REPL_input;
+var REPL_ws = null;
+var REPL_cmds = new Array();
+var REPL_session = 'common';
+var REPL_user = 'guest';
+var REPL_ws_cnt = 0;
 
 
-var DSP_MSG_INIT   =    'init'
-var DSP_MSG_CMD    =    'cmd'
-var DSP_MSG_ERROR  =    'err'
-var DSP_MSG_RESP   =    'resp'
-var DSP_MSG_PLOT   =    'plot' 
-var DSP_MSG_ENV    =    'env' 
+var REPL_MSG_INIT   =    'init'
+var REPL_MSG_CMD    =    'cmd'
+var REPL_MSG_ERROR  =    'err'
+var REPL_MSG_RESP   =    'resp'
+var REPL_MSG_PLOT   =    'plot' 
+var REPL_MSG_ENV    =    'env' 
 
 
-function DSP_termOpen() {
-    if (!DSP_term) {
-        DSP_term=new Terminal(
+function REPL_termOpen() {
+    if (!REPL_term) {
+        REPL_term=new Terminal(
             {
                 x: 0,
                 y: 0,
@@ -36,9 +36,9 @@ function DSP_termOpen() {
                 ps : ''
             }
         );
-        if (DSP_term) DSP_term.open();
+        if (REPL_term) REPL_term.open();
         
-        DSP_input=new Terminal(
+        REPL_input=new Terminal(
             {
                 x: 0,
                 y: 0,
@@ -50,27 +50,27 @@ function DSP_termOpen() {
                 id: 2,
                 termDiv: 'input_term',
                 crsrBlinkMode: true,
-                handler: DSP_termHandler,
+                handler: REPL_termHandler,
                 mapANSI:true,
                 frameColor : '#555555', 
                 frameWidth : 4,
-                ps : DSP_user + '>'
+                ps : REPL_user + '>'
             }
         );
-        if (DSP_input) DSP_input.open();
+        if (REPL_input) REPL_input.open();
         
         TermGlobals.keylock = true;
     }
-    DSP_input.wrapOff();
+    REPL_input.wrapOff();
 }
 
-function DSP_termHandler() {
+function REPL_termHandler() {
     // called on <CR> or <ENTER>
     this.newLine();
     var cmd = $.trim(this.lineBuffer);
     if (cmd != '') {
         // Send cmd to Server....
-        DSP_send(cmd); 
+        REPL_send(cmd); 
     }
   
    this.prompt();
@@ -78,22 +78,22 @@ function DSP_termHandler() {
 
 
 
-function DSP_init() {
-    DSP_termOpen();
+function REPL_init() {
+    REPL_termOpen();
 
     $('#set_session').click(function(o) {
-        DSP_init_ws();
+        REPL_init_ws();
     });
 
     $('#submit_ml').click(function(o) {
         var cmd = $("#ml_cmd").val(); 
-        DSP_send($.trim(cmd));
+        REPL_send($.trim(cmd));
     });
 
     $('#submit_ml_clear').click(function(o) {
         var cmd = $("#ml_cmd").val(); 
         $("#ml_cmd").val('');
-        DSP_send($.trim(cmd));
+        REPL_send($.trim(cmd));
     });
 
     $('#ml_clear').click(function(o) {
@@ -101,138 +101,138 @@ function DSP_init() {
     });
     
     
-    $('#session').val(DSP_session);
-    $('#user').val(DSP_user);
+    $('#session').val(REPL_session);
+    $('#user').val(REPL_user);
     
-    $('#input_term').click(function () {TermGlobals.keylock = false; DSP_input.focus();})    
+    $('#input_term').click(function () {TermGlobals.keylock = false; REPL_input.focus();})    
     $('#user').click(function () {TermGlobals.keylock = true; })    
     $('#session').click(function () {TermGlobals.keylock = true; })    
     $('#ml_cmd').click(function () {TermGlobals.keylock = true; })    
     
     TermGlobals.keylock = false; 
-    DSP_input.focus();    
+    REPL_input.focus();    
 }  
 
-function DSP_init_ws() {
-    if (DSP_ws != null) {
-        DSP_ws.close();
-        DSP_ws = null;
+function REPL_init_ws() {
+    if (REPL_ws != null) {
+        REPL_ws.close();
+        REPL_ws = null;
     }
     
-    DSP_ws = new WebSocket(DSP_wsUri); 
-    DSP_ws_cnt++; // Just to make sure we are with the same handle upon callback
+    REPL_ws = new WebSocket(REPL_wsUri); 
+    REPL_ws_cnt++; // Just to make sure we are with the same handle upon callback
     
-    var lcl_cnt = DSP_ws_cnt;
+    var lcl_cnt = REPL_ws_cnt;
     
-    DSP_ws.onopen = function(evt) { onOpen(evt, lcl_cnt) }; 
-    DSP_ws.onclose = function(evt) { onClose(evt, lcl_cnt) }; 
-    DSP_ws.onmessage = function(evt) { onMessage(evt, lcl_cnt) }; 
-    DSP_ws.onerror = function(evt) { onError(evt, lcl_cnt) }; 
+    REPL_ws.onopen = function(evt) { onOpen(evt, lcl_cnt) }; 
+    REPL_ws.onclose = function(evt) { onClose(evt, lcl_cnt) }; 
+    REPL_ws.onmessage = function(evt) { onMessage(evt, lcl_cnt) }; 
+    REPL_ws.onerror = function(evt) { onError(evt, lcl_cnt) }; 
 }  
 
 function onOpen(evt, chk_cnt) { 
-    if (chk_cnt != DSP_ws_cnt) return;
+    if (chk_cnt != REPL_ws_cnt) return;
     
-    DSP_debug("CONNECTED\n"); 
+    REPL_debug("CONNECTED\n"); 
 
     send_obj = {};
-    send_obj.type = DSP_MSG_INIT;
+    send_obj.type = REPL_MSG_INIT;
     send_obj.user = $('#user').val();
     send_obj.session = $('#session').val();
     send_obj.msg = '';
     
-    DSP_ws.send(JSON.stringify(send_obj)); 
+    REPL_ws.send(JSON.stringify(send_obj)); 
     
-    while (DSP_cmds.length > 0) {
-        msg_cmd = DSP_cmds.shift()
-        DSP_ws.send(msg_cmd); 
-        DSP_debug("SENT: " + msg_cmd + "\n");  
+    while (REPL_cmds.length > 0) {
+        msg_cmd = REPL_cmds.shift()
+        REPL_ws.send(msg_cmd); 
+        REPL_debug("SENT: " + msg_cmd + "\n");  
     }
     
 }  
 
 
-function DSP_send(cmd) 
+function REPL_send(cmd) 
 {
 
-//    DSP_debug("SENDING......\n");
+//    REPL_debug("SENDING......\n");
     
 
     if (cmd!='') {
         // Send cmd to Server....
-        if (DSP_ws == null) {
-            DSP_init_ws();
+        if (REPL_ws == null) {
+            REPL_init_ws();
         }
         
         send_obj = {};
-        send_obj.type = DSP_MSG_CMD;
+        send_obj.type = REPL_MSG_CMD;
         send_obj.msg = [cmd];
         
         send_str = JSON.stringify(send_obj);
         
-        if (DSP_ws.readyState == WebSocket.OPEN) {
-            DSP_ws.send(send_str); 
-            DSP_debug("SENT: " + JSON.stringify(send_str) + '\n');  
+        if (REPL_ws.readyState == WebSocket.OPEN) {
+            REPL_ws.send(send_str); 
+            REPL_debug("SENT: " + JSON.stringify(send_str) + '\n');  
         }
         else {
-            DSP_cmds.push(send_str);
-            DSP_debug("QUEUED CMD: " + cmd + "\n");  
+            REPL_cmds.push(send_str);
+            REPL_debug("QUEUED CMD: " + cmd + "\n");  
         }
     }
 }
 
 
 function onClose(evt, chk_cnt) { 
-    if (chk_cnt != DSP_ws_cnt) return;
-    DSP_debug("DISCONNECTED\n");
-    DSP_ws = null;
+    if (chk_cnt != REPL_ws_cnt) return;
+    REPL_debug("DISCONNECTED\n");
+    REPL_ws = null;
 }  
 
 function onMessage(evt, chk_cnt) { 
-    if (chk_cnt != DSP_ws_cnt) return;
-    DSP_debug("RESPONSE RAW : " + evt.data + '\n'); 
+    if (chk_cnt != REPL_ws_cnt) return;
+    REPL_debug("RESPONSE RAW : " + evt.data + '\n'); 
     resp = JSON.parse(evt.data)
     
-    if (resp.type == DSP_MSG_RESP) {
+    if (resp.type == REPL_MSG_RESP) {
         for (m in resp.msg) {
             b64decoded = window.atob(resp.msg[m]);
-            out_data = DSP_term.escapeMarkup(b64decoded); // We xpect it to be base64 encoded
+            out_data = REPL_term.escapeMarkup(b64decoded); // We xpect it to be base64 encoded
 
-            DSP_term.write(out_data);
+            REPL_term.write(out_data);
             
-            DSP_debug("RESPONSE: " + out_data + '\n'); 
+            REPL_debug("RESPONSE: " + out_data + '\n'); 
         }
     }
-    else if (resp.type == DSP_MSG_PLOT) {
-        $('#plot_img').replaceWith('<img id="plot_img" src="' + 'plots/' + DSP_session + '/' + resp.msg + '" >');
+    else if (resp.type == REPL_MSG_PLOT) {
+        $('#plot_img').replaceWith('<img id="plot_img" src="' + 'plots/' + REPL_session + '/' + resp.msg + '" >');
         
-        DSP_debug("PLOT: " + resp.msg + '\n'); 
+        REPL_debug("PLOT: " + resp.msg + '\n'); 
     }
-    else if (resp.type == DSP_MSG_ENV) {
+    else if (resp.type == REPL_MSG_ENV) {
         $('#user').val(resp.msg.user);
         $('#session').val(resp.msg.session);
-        DSP_session = resp.msg.session;
-        DSP_user = resp.msg.user;
+        REPL_session = resp.msg.session;
+        REPL_user = resp.msg.user;
 
-        DSP_input.ps = DSP_user + '>';
-        DSP_term.write("User set as : " + DSP_user);
-        DSP_input.prompt();
+        REPL_input.ps = REPL_user + '>';
+        REPL_term.write("User set as : " + REPL_user);
+        REPL_input.prompt();
         
-        DSP_debug("DSP_MSG_ENV: " + resp.msg.user + '@' + resp.msg.session + '\n'); 
+        REPL_debug("REPL_MSG_ENV: " + resp.msg.user + '@' + resp.msg.session + '\n'); 
     }
     else {
-        DSP_debug("Unknown type: " + resp.type + '\n'); 
+        REPL_debug("Unknown type: " + resp.type + '\n'); 
     }
     
     
 }  
 
 function onError(evt, chk_cnt) { 
-    if (chk_cnt != DSP_ws_cnt) return;
-    DSP_debug('ERROR: ' + evt.data + '\n'); 
+    if (chk_cnt != REPL_ws_cnt) return;
+    REPL_debug('ERROR: ' + evt.data + '\n'); 
 }  
 
-function DSP_debug(s)
+function REPL_debug(s)
 {
     return;
     
@@ -254,7 +254,7 @@ function lstrip(s, pfx) {
 }
 
 
-window.addEventListener("load", DSP_init, false);  
+window.addEventListener("load", REPL_init, false);  
 
 
 

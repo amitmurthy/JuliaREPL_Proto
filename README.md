@@ -18,7 +18,8 @@ Dependencies
 
 Implementation
 --------------
-- jserver.py is the daemon managing Julia Sessions. It directs incoming messages to the right julia process.
+- has only two small relevant files - html/js/REPL.js is javascript file while src/jserver.py is the back-end python server
+- jserver.py is the process managing Julia Sessions. It directs incoming messages to the right julia process.
     * Multiple users can share the same session
     * the subprocess module is used to spawn a julia process
     
@@ -60,4 +61,11 @@ Starting the web repl
 - listen port for jserver.py must be in sync with that in nginx.conf
 - point your browser at http://localhost:8000/ or whatever your configuration and you should be good to go.
 
+
+TODO
+====
+- sessions timeout on inactivity- fix it or implement a keepalive message
+- Handle zombie julia processes
+- Daemonize jserver.py
+- Delete session directory in /tmp/jl_sessions when session closes
 

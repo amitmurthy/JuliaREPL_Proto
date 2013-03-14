@@ -267,7 +267,7 @@ def mkdir_p(path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-j", "--julia", help="Full path to Julia executable", dest="julia", type=str, metavar='<path to julia>', default='julia')
-    parser.add_argument("-p", "--port", help="Julia sessions port number", dest="port", type=int, metavar='<port>', default=8888)
+    parser.add_argument("-p", "--port", help="jserver.py listen port(default 8888)", dest="port", type=int, metavar='<port>', default=8888)
     args = parser.parse_args()    
     
     http_server = tornado.httpserver.HTTPServer(application)

@@ -24,29 +24,20 @@ Implementation
     
 - Javascript code is in html/js/REPL.js
 - It uses a chat-like interface to support multiple users - i.e., a separate console for entering julia expressions just beneath the main window
-- In order to identify the different users, incoming expressions are appended with a julia comment specifying the username before passing them onto the julia process. 
-So, for example,
-   * browser sends the expression 
-    "a=1"
-   * jserver.py sends 
-    "a=1                                #<guest>" to the julia process
-   * the terminal in the browser sees 
-    "julia> a=1                                #<guest>"
+- In order to identify the different users, incoming expressions are appended with a right-justified julia comment specifying the username before passing them onto the julia process. 
+
 - the cwd of the julia process is changed to /tmp/jl_sessions/session_name
-- any images will be created in /tmp/jl_sessions/session_name
-- the image URLS are automatically pushed to the browser and displayed next to the terminal window.
+- any images are created in /tmp/jl_sessions/session_name if a path is not provided
+- /tmp/jl_sessions/session_name is monitored for new image files and the image URLS are automatically pushed to the browser.
+- images are displayed next to the terminal window.
 - images in /tmp/jl_sessions/session_name older than 5 minutes are automatically deleted
    
-   
-
 
 Caveats and quirks
 ------------------
 - currently the whole thing is more of a proof-of-concept - the code is not very resilient
-- has only tested it on Ubuntu 12.10 and Chrome
+- has only been tested it on Ubuntu 12.10 and Chrome
 - has not been tested with secure websockets (wss) which is currently a must for websocket proxy traversal
-
-
 
 
 Starting the web repl
